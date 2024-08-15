@@ -40,7 +40,7 @@ public:
     this->declare_parameter<bool>("coordinate_correction_flag", false);
     this->declare_parameter<std::string>("target_frame", "");
     this->declare_parameter<std::string>("fixed_frame", "");
-    standby = this->declare_parameter<bool>("standby", false);
+
     rclcpp::QoS qos(rclcpp::KeepLast(7));
     lidarPublisher = this->create_publisher<sensor_msgs::msg::PointCloud2>("pandar", qos); //Modified 
     packetPublisher = this->create_publisher<hesai_lidar::msg::PandarScan>("pandar_packets", qos);
@@ -167,18 +167,10 @@ private:
     }
 
     // Added 
-    std::cout << "Stand by : " << standby << std::endl;
-    if (hsdk != NULL) {
-        if (standby)
-        {
-          hsdk->StandBy(true);
-        }
-        else
-        {
-          // hsdk->StandBy(false);
-          hsdk->Start();
 
-        }
+    if (hsdk != NULL) {
+
+          hsdk->StandBy(true);
         
         // hsdk->LoadLidarCorrectionFile("...");  // parameter is stream in lidarCorrectionFile
     } else {
@@ -195,7 +187,7 @@ private:
   string m_sPublishType;
   string m_sTimestampType;
   rclcpp::Subscription<hesai_lidar::msg::PandarScan>::SharedPtr packetSubscriber;
-  bool standby = true;       // Added 
+
 };
 }
 int main(int argc, char **argv)

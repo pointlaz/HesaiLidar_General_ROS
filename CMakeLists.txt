@@ -16,10 +16,16 @@ find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rosidl_typesupport_c REQUIRED) 
+find_package(image_transport REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(pcl_conversions REQUIRED) #added 
+find_package(tf2_geometry_msgs REQUIRED) #added 
+find_package(tf2 REQUIRED)  #added 
+find_package(tf2_ros REQUIRED) # added 
+find_package(rclcpp_components) #added 
 # install(FILES DESTINATION share/${PROJECT_NAME})
 # ament_export_dependencies(rosidl_default_runtime)
 # ament_export_dependencies(rosidl_default_runtime)
@@ -47,11 +53,13 @@ target_include_directories(PandarGeneral PRIVATE
     src/HesaiLidar_General_SDK/src/PandarGeneralRaw/
     ${Boost_INCLUDE_DIRS}
     ${PCL_INCLUDE_DIRS}
+    ${tf2_ros_INCLUDE_DIRS} 
     # ${ament_INCLUDE_DIRS}
 )
 target_link_libraries(PandarGeneral
     ${Boost_LIBRARIES}
     ${PCL_IO_LIBRARIES}
+    ${tf2_ros_LIBRARIES} 
     Boost::thread
     pcap
     # ${ament_LIBRARIES}
@@ -89,6 +97,7 @@ rosidl_target_interfaces(PandarGeneralSDK   ${PROJECT_NAME} "rosidl_typesupport_
 add_executable(hesai_lidar_node
     src/main_ros2.cc
 )
+
 ament_target_dependencies(hesai_lidar_node
   "geometry_msgs"  # maybe don't need this
   "ament_index_cpp"
@@ -99,6 +108,7 @@ ament_target_dependencies(hesai_lidar_node
   "sensor_msgs"
   "std_msgs"
   "tf2_geometry_msgs"
+  "image_transport"
 )
 
 target_include_directories(hesai_lidar_node PRIVATE
@@ -106,6 +116,7 @@ target_include_directories(hesai_lidar_node PRIVATE
     src/HesaiLidar_General_SDK/src/PandarGeneralRaw/include
     ${PCL_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+    ${image_transport_INCLUDE_DIRS}
 )
 
 target_link_libraries(hesai_lidar_node 
@@ -115,10 +126,46 @@ target_link_libraries(hesai_lidar_node
 )
 
 rosidl_target_interfaces(hesai_lidar_node  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+## standby_hesai_lidar_node
+add_executable(standby_hesai_lidar_node
+    src/standby_hesai_lidar_node.cc
+)
+
+ament_target_dependencies(standby_hesai_lidar_node
+  "geometry_msgs"  # maybe don't need this
+  "ament_index_cpp"
+  "pcl_conversions"
+  "rcl_interfaces"
+  "rclcpp"
+  "rcutils"
+  "sensor_msgs"
+  "std_msgs"
+  "tf2_geometry_msgs"
+  "image_transport"
+)
+
+target_include_directories(standby_hesai_lidar_node PRIVATE
+    src/HesaiLidar_General_SDK/include
+    src/HesaiLidar_General_SDK/src/PandarGeneralRaw/include
+    ${PCL_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    ${image_transport_INCLUDE_DIRS}
+)
+
+target_link_libraries(standby_hesai_lidar_node 
+    ${PCL_IO_LIBRARIES}
+    ${Boost_SYSTEM_LIBRARY}
+    PandarGeneralSDK
+)
+
+rosidl_target_interfaces(standby_hesai_lidar_node  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
 install(TARGETS hesai_lidar_node
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch
+                  config
   DESTINATION share/${PROJECT_NAME})
 
 ament_package()

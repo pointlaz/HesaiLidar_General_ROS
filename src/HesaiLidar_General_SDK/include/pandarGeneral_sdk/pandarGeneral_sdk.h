@@ -80,6 +80,7 @@ class PandarGeneralSDK {
   void GetCalibrationFromDevice();
   int Start();
   void Stop();
+  void StandBy(bool standBy); // Added 
   void PushScanPacket(hesai_lidar::msg::PandarScan::SharedPtr scan);
 
  private:

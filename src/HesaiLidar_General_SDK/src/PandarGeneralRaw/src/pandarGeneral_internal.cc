@@ -19,6 +19,8 @@
 #include "src/input.h"
 #include "src/pandarGeneral_internal.h"
 #include "log.h"
+#include <functional>
+
 #include <sched.h>
 #include <tf2_ros/transform_listener.h>
 // #include <geometry_msgs/TransformStamped.h>
@@ -26,7 +28,7 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
+#include <boost/bind/placeholders.hpp>
 double degreeToRadian(double degree) { return degree * M_PI / 180; }
 
 // elevation angle of each line for HS Line 40 Lidar, Line 1 - Line 40
@@ -686,7 +688,7 @@ int PandarGeneral_Internal::Start() {
     lidar_recv_thr_ =
         new boost::thread(boost::bind(&PandarGeneral_Internal::RecvTask, this));
   } else {
-    pcap_reader_->start(boost::bind(&PandarGeneral_Internal::FillPacket, this, _1, _2, _3));
+    pcap_reader_->start(boost::bind(&PandarGeneral_Internal::FillPacket, this, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3));
   }
 }
 

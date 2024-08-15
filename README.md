@@ -176,3 +176,10 @@ $ ros2 launch hesai_lidar hesai_lidar_launch.py
 |multicast_ip|The multicast IP address of connected Lidar, will be used to get udp packets from multicast ip address|
 |coordinate_correction_flag|default "false":Disable coordinate correction "true":Enable coordinate correction|
 
+# Modifications that was done by Ghassen to make the package work
+- In the boost::bind, modify the placeholders ex:_1 to boost::placeholders::_1
+- Check the "#added" in package.xml and CMakeLists.txt
+- In main_ros2.cc, modify lidarPublisher = this->create_publisher<sensor_msgs::msg::PointCloud2>("pandar") to lidarPublisher = this->create_publisher<sensor_msgs::msg::PointCloud2>("pandar", qos); 
+- Some packages might need to be installed like tf2 (with sudo apt-get install ros-humble-<package_name>)
+- Run sudo apt install libpcap-dev and sudo apt install libprotobuf-dev protobuf-compiler
+- Add #include <tf2_ros/buffer.h>  to src/HesaiLidar_General_SDK/src/PandarGeneralRaw/src/pandarGeneral_internal.h
