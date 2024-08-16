@@ -22,11 +22,13 @@ def generate_launch_description():
         DeclareLaunchArgument('coordinate_correction_flag', default_value='false'),
         DeclareLaunchArgument('fixed_frame', default_value=''),
         DeclareLaunchArgument('target_frame', default_value=''),
+        DeclareLaunchArgument('namespace', default_value='hesai'),
 
         Node(
             package='hesai_lidar',
             executable='hesai_lidar_node',
             name='standby_hesai_lidar',
+            namespace=LaunchConfiguration('namespace'),
             output='screen',
             parameters=[{
                 'pcap_file': LaunchConfiguration('pcap_file'),

@@ -2,32 +2,38 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, ThisLaunchFileDir
 from launch_ros.actions import Node
+import os 
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
+    share_path = get_package_share_directory("hesai_lidar")
+    config_path = os.path.join(share_path, "config")
+
     return LaunchDescription([
         DeclareLaunchArgument('pcap_file', default_value=''),
         DeclareLaunchArgument('server_ip', default_value='192.168.1.201'),
         DeclareLaunchArgument('lidar_recv_port', default_value='2368'),
         DeclareLaunchArgument('gps_port', default_value='10110'),
         DeclareLaunchArgument('start_angle', default_value='0.0'),
-        DeclareLaunchArgument('lidar_type', default_value=''),
+        DeclareLaunchArgument('lidar_type', default_value='PandarXT-32'),
         DeclareLaunchArgument('frame_id', default_value='lidar'),
         DeclareLaunchArgument('pcldata_type', default_value='0'),
         DeclareLaunchArgument('publish_type', default_value='points'),
         DeclareLaunchArgument('timestamp_type', default_value=''),
         DeclareLaunchArgument('data_type', default_value=''),
         DeclareLaunchArgument('namespace', default_value='hesai'),
-        DeclareLaunchArgument('lidar_correction_file', default_value=[ThisLaunchFileDir(), '/config/Pandar64-32.csv']),
+        DeclareLaunchArgument('lidar_correction_file', default_value=os.path.join(config_path, 'PandarXT-32.csv')),
         DeclareLaunchArgument('multicast_ip', default_value=''),
         DeclareLaunchArgument('coordinate_correction_flag', default_value='false'),
         DeclareLaunchArgument('fixed_frame', default_value=''),
         DeclareLaunchArgument('target_frame', default_value=''),
+        DeclareLaunchArgument('standby', default_value='false'),
 
         Node(
             package='hesai_lidar',
             executable='hesai_lidar_node',
             name='hesai_lidar',
-            namespace=LaunchConfiguration('namespace'), 
+            namespace=LaunchConfiguration('namespace'),
             output='screen',
             parameters=[{
                 'pcap_file': LaunchConfiguration('pcap_file'),
@@ -46,6 +52,7 @@ def generate_launch_description():
                 'coordinate_correction_flag': LaunchConfiguration('coordinate_correction_flag'),
                 'fixed_frame': LaunchConfiguration('fixed_frame'),
                 'target_frame': LaunchConfiguration('target_frame'),
+                'standby': LaunchConfiguration('standby'),
             }]
         ),
     ])
